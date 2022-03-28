@@ -30,7 +30,7 @@ namespace DataLayer.Models
 
         public virtual ICollection<Comment> Comments { get; set; }
 
-        public ICollection<Excursion> Excurrsions { get; set; }
+        public ICollection<Excursion> Excursions { get; set; }
 
         [JsonIgnore]
         public string PasswordHash { get; set; }

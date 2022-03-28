@@ -8,7 +8,7 @@ using DataLayer.Interfaces;
 
 namespace DataLayer.Repositories
 {
-    internal class DestinationRepository : BaseRepository<Destinations>, IDestinationRepository
+    public class DestinationRepository : BaseRepository<Destinations>, IDestinationRepository
     {
         public DestinationRepository(DBContext context) : base(context)
         {

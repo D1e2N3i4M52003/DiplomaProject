@@ -62,3 +62,4 @@ C:\Users\PC\source\repos\TouristAgency\Web\obj\Debug\net6.0\Web.pdb
 C:\Users\PC\source\repos\TouristAgency\Web\obj\Debug\net6.0\Web.genruntimeconfig.cache
 C:\Users\PC\source\repos\TouristAgency\Web\obj\Debug\net6.0\ref\Web.dll
 C:\Users\PC\source\repos\TouristAgency\Web\bin\Debug\net6.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+C:\Users\PC\source\repos\TouristAgency\Web\bin\Debug\net6.0\Microsoft.AspNetCore.Authentication.OpenIdConnect.dll

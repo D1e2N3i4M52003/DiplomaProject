@@ -7,7 +7,7 @@ using DataLayer.Models;
 
 namespace DataLayer.Interfaces
 {
-    internal interface ICommentRepository : IBaseRepository<Comment>
+    public interface ICommentRepository : IBaseRepository<Comment>
     {
     }
 }

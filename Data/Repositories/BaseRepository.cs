@@ -12,35 +12,35 @@ namespace DataLayer.Repositories
 {
     public class BaseRepository<T> : IBaseRepository<T> where T : BaseEntity
     {
-        protected readonly DBContext context;
+        protected readonly DBContext _context;
 
         public BaseRepository(DBContext context)
         {
-            this.context = context;
+            _context = context;
         }
 
         public virtual IQueryable<T> GetAll()
         {
-            return context.Set<T>().AsQueryable();
+            return _context.Set<T>().AsQueryable();
         }
 
         public virtual IQueryable<T> GetAll(Expression<Func<T, bool>> filter)
         {
-            return context.Set<T>().Where(filter);
+            return _context.Set<T>().Where(filter);
         }
         public virtual ValueTask<T?> GetByAsync(Expression<Func<T, bool>> filter)
         {
-            return context.Set<T>().FindAsync(filter);
+            return _context.Set<T>().FindAsync(filter);
         }
         public virtual async ValueTask<T?> GetByIdAsync(Guid id)
         {
-            return await context.Set<T>().FindAsync(id);
+            return await _context.Set<T>().FindAsync(id);
         }
 
         public virtual async Task CreateAsync(T entity)
         {
-            context.Set<T>().Add(entity);
-            await context.SaveChangesAsync();
+            _context.Set<T>().Add(entity);
+            await _context.SaveChangesAsync();
         }
 
         public virtual async Task UpdateAsync(T entity)
@@ -52,9 +52,9 @@ namespace DataLayer.Repositories
                 throw new ArgumentException();
             }
 
-            context.Entry(dbEntity).CurrentValues.SetValues(entity);
+            _context.Entry(dbEntity).CurrentValues.SetValues(entity);
 
-            await context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
         }
 
         public virtual async Task DeleteAsync(Guid id)
@@ -66,9 +66,9 @@ namespace DataLayer.Repositories
                 throw new ArgumentException();
             }
 
-            context.Remove(entity);
+            _context.Remove(entity);
 
-            await context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
         }
     }
 }

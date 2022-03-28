@@ -7,7 +7,7 @@ using DataLayer.Models;
 
 namespace DataLayer.Interfaces
 {
-    internal interface IDestinationRepository : IBaseRepository<Destinations>
+    public interface IDestinationRepository : IBaseRepository<Destinations>
     {
     }
 }
