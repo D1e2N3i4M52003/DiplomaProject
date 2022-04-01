@@ -15,7 +15,7 @@ namespace Business.Authorization
     public interface IJwtUtils
     {
         public string GenerateJwtToken(User user);
-        public Guid ValidateJwtToken(string token);
+        public string ValidateJwtToken(string token);
     }
 
     public class JwtUtils : IJwtUtils
@@ -42,10 +42,10 @@ namespace Business.Authorization
             return tokenHandler.WriteToken(token);
         }
 
-        public Guid ValidateJwtToken(string token)
+        public string ValidateJwtToken(string token)
         {
             if (token == null)
-                throw new ArgumentNullException();
+                return null;
 
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
@@ -62,7 +62,7 @@ namespace Business.Authorization
                 }, out SecurityToken validatedToken);
 
                 var jwtToken = (JwtSecurityToken)validatedToken;
-                var userId = Guid.Parse(jwtToken.Claims.First(x => x.Type == "id").Value);
+                var userId = jwtToken.Claims.First(x => x.Type == "id").Value;
 
                 // return user id from JWT token if validation successful
                 return userId;
@@ -70,7 +70,7 @@ namespace Business.Authorization
             catch
             {
                 // return null if validation fails
-                throw new Exception();
+                return null;
             }
         }
     }

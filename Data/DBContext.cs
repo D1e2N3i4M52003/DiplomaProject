@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using Microsoft.EntityFrameworkCore;
 using DataLayer.Models;
+using BCryptNet = BCrypt.Net.BCrypt;
 
 namespace DataLayer
 {
@@ -33,6 +34,19 @@ namespace DataLayer
             modelBuilder
                 .Entity<Like>()
                 .HasKey(l => new { l.UserId, l.PostId });
+
+            modelBuilder.Entity<User>().HasData(
+                new User 
+                { 
+                    Id = Guid.NewGuid(),
+                    Firstname = "Ad",
+                    Lastname = "min",
+                    Username = "Admin",
+                    Email = "admin@gmail.com",
+                    CreationDate = DateTime.Now,
+                    Role = Role.Admin,
+                    PasswordHash = BCryptNet.HashPassword("AdminPa33word")
+                });
 
             base.OnModelCreating(modelBuilder);
         }

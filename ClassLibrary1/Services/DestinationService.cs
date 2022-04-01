@@ -1,5 +1,5 @@
 ﻿using Business.JSONModels;
-using DataLayer.Repositories;
+using DataLayer.Interfaces;
 using DataLayer.Models;
 using Business.Interfaces;
 using System;
@@ -14,9 +14,9 @@ namespace Business.Services
 {
     public class DestinationService : IDestinationService
     {
-        private readonly DestinationRepository _repository;
+        private readonly IDestinationRepository _repository;
 
-        public DestinationService(DestinationRepository repository)
+        public DestinationService(IDestinationRepository repository)
         {
             _repository = repository;
         }

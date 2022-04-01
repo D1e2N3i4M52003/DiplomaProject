@@ -1,5 +1,6 @@
 ﻿using DataLayer.Interfaces;
 using Business.Helpers;
+using Business.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using System;
@@ -21,14 +22,14 @@ namespace Business.Authorization
             _appSettings = appSettings.Value;
         }
 
-        public async Task Invoke(HttpContext context, IUserRepository userRepository, IJwtUtils jwtUtils)
+        public async Task Invoke(HttpContext context, IUserService userService, IJwtUtils jwtUtils)
         {
             var token = context.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
-            var userId = jwtUtils.ValidateJwtToken(token);
+            var userId = Guid.Parse(jwtUtils.ValidateJwtToken(token));
             if (userId != null)
             {
                 // attach user to context on successful jwt validation
-                context.Items["User"] = userRepository.GetByIdAsync(userId);
+                context.Items["User"] = userService.GetById(userId);
             }
 
             await _next(context);
