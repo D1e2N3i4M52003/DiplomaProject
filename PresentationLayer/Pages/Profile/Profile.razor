@@ -1,0 +1,107 @@
+﻿@page "/profile"
+@using System.ComponentModel.DataAnnotations
+@using Business.JSONModels
+@using Newtonsoft.Json;
+@using PresentationLayer.Services;
+@inject HttpClient Http
+@inject NavigationManager navManager
+@inject IJWTService jwt
+@inject IAuthenticationService authService
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+@if (s != null)
+{
+    <EditForm Model="@u">
+        <DataAnnotationsValidator />
+        <div class="mb-3 row">
+            <label class="form-label">Username</label>
+            <input type="text" class="form-control"  placeholder="@u.Username">
+        </div>
+        <div class="mb-3 row">
+            <label class="form-label">First name</label>
+            <input type="text" class="form-control"  placeholder="@u.Firstname">
+        </div>
+        <div class="mb-3 row">
+            <label class="form-label">Last name</label>
+            <input type="text" class="form-control"  placeholder="@u.Lastname">
+        </div>
+        <div class="mb-3 row">
+            <label for="exampleFormControlInput1" class="form-label">Email address</label>
+            <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="@u.Email">
+        </div>
+        <div class="col-3">
+            <button class="btn btn-primary" @onclick="LogOut">Change password</button>
+            <button class="btn btn-danger" @onclick="LogOut">Log Out</button>
+            
+        </div>@if (role == "Admin" || role == "Moderator")
+        {
+            <NavLink class="nav-link" href="administration">
+               System Settings
+             </NavLink>}
+        
+    </EditForm>
+    <section>
+    <h1>Excursions</h1>
+
+           @foreach (var excursion in u.Excursions)
+            {
+                <div class="card my-4">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            @excursion.Name - 
+                        <small class="card-subtitle">@excursion.Price</small>
+                        </h5>
+                        @foreach(var dest in excursion.Destinations)
+                        {
+                            <p class="card-text">
+                                @dest.Name
+                            </p>
+                        }
+                        <p>@excursion.StartsOnDate - @excursion.EndsOnDate</p>
+                        <a class="btn btn-danger">Unreserve</a>
+                    </div>
+                </div>
+            }
+        </section>
+}
+@if(s==null)
+{  <div class="col-12">
+        <button class="btn" @onclick="LogIn">Log In</button>
+    </div>
+}
+@code 
+    
+{
+    private AuthenticateRequest user = new AuthenticateRequest();
+    private RequestUser requestUser = new RequestUser();
+    private EditUserRequest u = new EditUserRequest();
+    private HttpResponseMessage response = new HttpResponseMessage();
+    private AuthenticateResponse res= new AuthenticateResponse();
+    private string r;
+    private string s;
+    private bool loading;
+    private string error;
+    private string role;
+    protected override async Task OnInitializedAsync()
+    {
+        s = await localStorage.GetItemAsync<string>("token");
+        if (s != null)
+        {
+            role = jwt.GetRole(s);
+            requestUser.Id = jwt.GetId(s);
+            response = await Http.PostAsJsonAsync<RequestUser>("Users/" + requestUser.Id, requestUser);
+            r = await response.Content.ReadAsStringAsync();
+            u = JsonConvert.DeserializeObject<EditUserRequest>(r);
+        }
+        
+            StateHasChanged();
+    }
+    private void LogOut()
+    {
+        authService.Logout();
+    }
+    private void LogIn()
+    {
+        navManager.NavigateTo("login");
+    }
+    
+}

@@ -1,0 +1,95 @@
+﻿@page "/post/edit"
+@using PresentationLayer.Helpers;
+@using System.Net.Http.Formatting;
+@inject HttpClient Http
+@inject IJWTService jwt
+@inject NavigationManager navManager
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+
+<EditForm Model="@postModel">
+                <InputSelect id="department" @bind-Value="Title" class="form-control">
+                     <option value=" ">  </option>
+                @foreach (var post in posts)
+                {
+                    <option value="@post.Title">@post.Title</option>
+                }
+            </InputSelect>
+            <button type="button" @onclick="Edit" data-dismiss="modal">
+                        Edit
+            </button>
+</EditForm>
+    <div class="card">
+        <h4 class="card-header">Edit</h4>
+        <div class="card-body">
+            <EditForm Model="@pst" OnValidSubmit="HandleValidSubmit">
+                <DataAnnotationsValidator />
+                <div class="form-group">
+                    <label>Name</label>
+                    <InputTextArea @bind-Value="pst.Text" class="form-control" placeholder="@pst.Text" />
+                    <ValidationMessage For="@(() => pst.Text)" />
+                </div>
+                <button class="btn btn-primary">
+                    @if (loading) {
+                        <span class="spinner-border spinner-border-sm mr-1"></span>
+                    }
+                    Edit
+                </button>
+                @if (!string.IsNullOrEmpty(error)) {
+                    <div class="alert alert-danger mt-3 mb-0">@error</div>
+                }
+            </EditForm>
+        </div>
+    </div>
+     
+
+@code {
+    private List<PostModel> posts = new List<PostModel>();
+    private PostModel postModel =new PostModel();
+    private PostModel pst =new PostModel();
+    [Parameter] public string Title{get; set; }
+    protected override async Task OnInitializedAsync()
+    {
+        posts = await Http.GetFromJsonAsync<List<PostModel>>("Post");
+    }
+
+
+    public async void Edit()
+    {
+        pst = posts.Find(d => d.Title == Title);
+
+    }
+
+    private HttpResponseMessage response = new HttpResponseMessage();
+    private string r;
+    private string t;
+    private string u;
+    private bool loading;
+    private string error;
+    
+    
+
+    private async void HandleValidSubmit()
+    {
+        loading = true;
+        try
+        {
+            string s =await localStorage.GetItemAsync<string>("token");
+            pst.UserRole = jwt.GetRole(s);
+            string bearer = jwt.GetRole(s);
+            if (Http.DefaultRequestHeaders.Authorization == null)
+            {
+                Http.DefaultRequestHeaders.Add("Authorization", bearer);
+            }
+            response = await HttpService.PatchAsJsonAsync<PostModel>(Http,"https://localhost:7269/Post/Edit", pst);
+            r = await response.Content.ReadAsStringAsync();
+            navManager.NavigateTo("");
+        }
+        catch (Exception ex)
+        {
+            error = ex.Message;
+            loading = false;
+            StateHasChanged();
+        }
+    }
+}
+}

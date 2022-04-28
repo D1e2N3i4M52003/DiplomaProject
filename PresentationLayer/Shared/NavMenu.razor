@@ -1,0 +1,68 @@
+﻿@using System.ComponentModel.DataAnnotations
+@using Business.JSONModels
+@using Newtonsoft.Json;
+@using PresentationLayer.Services;
+@inject HttpClient Http
+@inject IJWTService jwtService
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+
+<section class="jumbotron">
+<nav class="navbar navbar-expand-sm navbar-light bg-light">
+    <div class="container">
+    <a class="navbar-brand mr-auto" href="">Tourist Agency</a>
+    <button class="navbar-toggler" @onclick="ToggleNavMenu">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    
+    <div class="@NavMenuCssClass collapse navbar-collapse" id="Navbar">
+       <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+                <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                    <span class="oi oi-home" aria-hidden="true"></span> Начало
+                </NavLink>
+            </li>
+            <li class="nav-item">
+                <NavLink class="nav-link" href="posts">
+                    <span class="oi oi-home" aria-hidden="true"></span> Новини
+                </NavLink>
+            </li>
+            <li class="nav-item">
+                <NavLink class="nav-link" href="excursions">
+                    <span class="oi oi-home" aria-hidden="true"></span>Услуги
+            </NavLink>
+            </li>
+            <li class="nav-item">
+                <NavLink class="nav-link" href="destinations">
+                    <span class="oi oi-home" aria-hidden="true"></span> Дестинации
+                </NavLink>
+            </li>
+            <li class="nav-item">
+                <NavLink class="nav-link" href="aboutus">
+                    <span class="oi oi-home" aria-hidden="true"></span>За нас
+            </NavLink>
+            </li>
+            <li class="nav-item">
+                <NavLink class="nav-link" href="contact">
+                    <span class="oi oi-home" aria-hidden="true"></span>Контакти
+            </NavLink>
+            </li>
+             <li class="nav-item">
+                <NavLink class="nav-link" href="profile">
+                   <span class="oi oi-home" aria-hidden="true"></span> Профил
+                </NavLink>
+             </li>
+        </ul> 
+        </div>
+    </div>
+</nav>
+</section>
+@code {
+    private bool collapseNavMenu = true;
+
+    private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+    private void ToggleNavMenu()
+    {
+        collapseNavMenu = !collapseNavMenu;
+    }
+}

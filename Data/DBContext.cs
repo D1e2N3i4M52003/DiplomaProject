@@ -16,10 +16,9 @@ namespace DataLayer
 
        
         public DbSet<User> Users { get; set; }
-        public DbSet<Comment> Comments { get; set; }
+        public DbSet<Post> Posts { get; set; }
         public DbSet<Destinations> Destinations { get; set; }
         public DbSet<Excursion> Excursions { get; set; }
-        public DbSet<Like> Likes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -31,10 +30,16 @@ namespace DataLayer
                 .HasIndex(x => x.Email)
                 .IsUnique();
 
-            modelBuilder
-                .Entity<Like>()
-                .HasKey(l => new { l.UserId, l.PostId });
 
+            modelBuilder.Entity<Post>()
+                .HasIndex(x => x.Title)
+                .IsUnique();
+
+            modelBuilder.Entity<Destinations>()
+                .HasIndex(x => x.Name)
+                .IsUnique();
+
+            
             modelBuilder.Entity<User>().HasData(
                 new User 
                 { 
@@ -48,8 +53,26 @@ namespace DataLayer
                     PasswordHash = BCryptNet.HashPassword("AdminPa33word")
                 });
 
+            modelBuilder.Entity<Destinations>().HasData(
+                new Destinations
+                {
+                    Id = Guid.NewGuid(),
+                    Name = "Ancient Theathre",
+                    City = "Plovdiv",
+                    Description = "In Plovdiv"
+                });
+            modelBuilder.Entity<Excursion>().HasData(
+                new Excursion
+                {
+                    Id = Guid.NewGuid(),
+                    Name = "Plovdiv",
+                    CreationDate = DateTime.Now,
+                    Price = 14,
+                    StartsOnDate = DateTime.Today,
+                    EndsOnDate = DateTime.Today,
+                    Destinations = new List<Destinations>()
+                });
             base.OnModelCreating(modelBuilder);
         }
- 
     }
 }

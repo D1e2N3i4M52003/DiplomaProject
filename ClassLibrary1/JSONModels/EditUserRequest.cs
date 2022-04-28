@@ -6,22 +6,19 @@ using System.Threading.Tasks;
 
 namespace Business.JSONModels
 {
-    public class EditUserRequest
+    public class EditUserRequest : BaseModel
     {
-        [Required]
-        public Guid ID { get; set; }
+         public Guid ID { get; set; }
 
-        [Required]
         public string Firstname { get; set; }
 
-        [Required]
         public string Lastname { get; set; }
 
-        [Required]
         public string Username { get; set; }
 
-        [Required]
         public string Email { get; set; }
 
+        public string UserRole { get; set; }
+        public List<ExcursionModel> Excursions { get; set; }
     }
 }

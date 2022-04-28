@@ -34,6 +34,7 @@ namespace Business.Services
                 EndsOnDate = model.EndsOnDate,
                 StartsOnDate = model.StartsOnDate,
                 Price = model.Price,
+                Destinations = new List<Destinations>(),
             };
             await _repository.CreateAsync(excursion);
         }
@@ -43,12 +44,27 @@ namespace Business.Services
 
             Excursion excursion = new Excursion
             {
+                Id = model.Id,
                 Name = model.Name,
                 EndsOnDate = model.EndsOnDate,
                 StartsOnDate = model.StartsOnDate,
                 Price = model.Price,
             };
-
+            excursion.Destinations = new List<Destinations>();
+            foreach (var destinationModel in model.Destinations)
+            {
+                
+                Destinations? destination = await _destinationRepository.GetByIdAsync(destinationModel.Id);
+                if (destination is null)
+                {
+                    throw new ArgumentException("No such destination exists!");
+                }
+                excursion.Destinations.Add(destination);
+                if (destination.Excursions is null)
+                {
+                    destination.Excursions = new List<Excursion>();
+                }
+            }
             await _repository.UpdateAsync(excursion);
         }
 
@@ -61,48 +77,57 @@ namespace Business.Services
             }
             ExcursionModel excursionModel = new ExcursionModel
             {
+                Id = excursion.Id,
                 Name = excursion.Name,
                 EndsOnDate = excursion.EndsOnDate,
                 StartsOnDate = excursion.StartsOnDate,
                 Price = excursion.Price,
+                Destinations = new List<DestinationModel>()
             };
-            return excursionModel;
-        }
-
-        public async Task<List<DestinationModel>> GetAllDestinations(Guid id)
-        {
-            Excursion? excursion = await _repository.GetByIdAsync(id);
-            if (excursion is null)
-            {
-                throw new ArgumentException("No such user exists!");
-            }
             List<DestinationModel> destinations = new List<DestinationModel>();
             foreach (var destination in excursion.Destinations)
             {
+                Destinations dest = await _destinationRepository.GetByIdAsync(destination.Id);
                 DestinationModel destinationModel = new DestinationModel
                 {
-                    City = destination.City,
-                    Name = destination.Name,
+                    Id = dest.Id,
+                    City = dest.City,
+                    Name = dest.Name,
                 };
-                destinations.Add(destinationModel);
+                excursionModel.Destinations.Add(destinationModel);
             }
-            return destinations;
+            return excursionModel;
         }
+
 
         public async Task<ExcursionModel> GetByAsync(Expression<Func<Excursion, bool>> filter)
         {
-            Excursion? excursion = await _repository.GetByAsync(filter);
-            if (excursion is null)
+            ICollection<Excursion?> excursions = await _repository.GetByAsync(filter);
+            if (excursions.Count==0)
             {
                 throw new ArgumentException("No such excursion exists!");
             }
+            Excursion excursion = excursions.First();
             ExcursionModel excursionModel = new ExcursionModel
             {
+                Id = excursion.Id,
                 Name = excursion.Name,
                 EndsOnDate = excursion.EndsOnDate,
                 StartsOnDate = excursion.StartsOnDate,
                 Price = excursion.Price,
             };
+            List<DestinationModel> destinations = new List<DestinationModel>();
+            foreach (var destination in excursion.Destinations)
+            {
+                Destinations dest = await _destinationRepository.GetByIdAsync(destination.Id);
+                DestinationModel destinationModel = new DestinationModel
+                {
+                    Id = dest.Id,
+                    City = dest.City,
+                    Name = dest.Name,
+                };
+                excursionModel.Destinations.Add(destinationModel);
+            }
             return excursionModel;
         }
 
@@ -113,24 +138,44 @@ namespace Business.Services
 
         public async Task<List<ExcursionModel>> GetAll()
         {
-            List<Excursion> excursions = await _repository.GetAll().Select(d => d).ToListAsync();
+            List<Excursion> excursions = _repository.GetAll().Result.ToList();
             List<ExcursionModel> excursionModels = new List<ExcursionModel>();
             foreach (var excursion in excursions)
             {
+                
                 ExcursionModel excursionModel = new ExcursionModel
                 {
+                    Id = excursion.Id,
                     Name = excursion.Name,
                     EndsOnDate = excursion.EndsOnDate,
                     StartsOnDate = excursion.StartsOnDate,
                     Price = excursion.Price,
-                };
+                    Destinations = new List<DestinationModel>()
+            };
+                if (excursion.Destinations == null)
+                { excursionModel.Destinations = new List<DestinationModel>(); }
+                else
+                {
+                    foreach (var destination in excursion.Destinations)
+                    {
+                        Destinations dest = await _destinationRepository.GetByIdAsync(destination.Id);
+                        DestinationModel destinationModel = new DestinationModel
+                        {
+                            Id = dest.Id,
+                            City = dest.City,
+                            Name = dest.Name,
+                            Description = dest.Description
+                        };
+                        excursionModel.Destinations.Add(destinationModel);
+                    }
+                }
                 excursionModels.Add(excursionModel);
             }
             return excursionModels;
         }
         public async Task<List<ExcursionModel>> GetAll(Expression<Func<Excursion, bool>> filter)
         {
-            List<Excursion> excursions = await _repository.GetAll().Select(d => d).ToListAsync();
+            List<Excursion> excursions = _repository.GetAll().Result.ToList();
             List<ExcursionModel> excursionModels = new List<ExcursionModel>();
             foreach (var excursion in excursions)
             {
@@ -144,21 +189,6 @@ namespace Business.Services
                 excursionModels.Add(excursionModel);
             }
             return excursionModels;
-        }
-        public async Task AddDestination(DestinationModel model)
-        {
-            Destinations? destination = await _destinationRepository.GetByIdAsync(model.Id);
-            if (destination is null)
-            {
-                throw new ArgumentException("No such destination exists!");
-            }
-            Excursion? excursion = await _repository.GetByIdAsync(model.Id);
-            if (excursion is null)
-            {
-                throw new ArgumentException("No such excursion exists!");
-            }
-            excursion.Destinations.Add(destination);
-            destination.Excursions.Add(excursion);
         }
     }
 }

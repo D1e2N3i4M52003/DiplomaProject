@@ -1,0 +1,50 @@
+﻿@page "/destinations"
+@using System.ComponentModel.DataAnnotations
+@using Business.JSONModels
+@using Newtonsoft.Json;
+@using PresentationLayer.Services;
+@inject HttpClient Http
+@inject IJWTService jwtService
+@inject IAuthenticationService authService
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+
+<PageTitle>Дестинации</PageTitle>
+
+<h1>Дестинации</h1>
+
+
+
+
+           @foreach (var destination in destinations)
+            {
+                <div class="card my-4">
+                    <div class="card-img" style="background-image: url('@(placeholderImage)');">
+
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            @destination.Name
+                        </h5>
+                        
+                        <p class="card-text">@destination.Description</p>
+                        <p class="card-text">@destination.City</p>
+                    </div>
+                </div>
+            }
+
+
+@code {
+    string s;
+    private List<DestinationModel> destinations = new List<DestinationModel>();
+
+    string placeholderImage = "https://via.placeholder.com/1060x100"; 
+
+    protected override async Task OnInitializedAsync()
+    {
+        s = await localStorage.GetItemAsync<string>("token");
+        if(s!=null){
+        if (jwtService.GetExpiryTimestamp(s) <= DateTime.Now)
+        { await authService.Logout(); }}
+        destinations = await Http.GetFromJsonAsync<List<DestinationModel>>("Destination");
+    } 
+}

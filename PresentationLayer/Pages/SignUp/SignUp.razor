@@ -1,0 +1,115 @@
+﻿@page "/signup"
+@using System.ComponentModel.DataAnnotations
+@using Business.JSONModels
+@using Newtonsoft.Json;
+@using PresentationLayer.Services;
+@inject HttpClient Http
+@inject NavigationManager navManager
+@inject IJWTService jwt
+@inject IAuthenticationService authService
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+
+    <div class="card">
+        <h4 class="card-header">SignUp</h4>
+        <div class="card-body">
+            <EditForm Model="@u" OnValidSubmit="HandleValidSubmit">
+                <DataAnnotationsValidator />
+                <div class="form-group">
+                    <label>Username</label>
+                    <InputText @bind-Value="u.Username" class="form-control" />
+                    <ValidationMessage For="@(() => u.Username)" />
+                </div>
+                <div class="form-group">
+                    <label>First Name</label>
+                    <InputText @bind-Value="u.Firstname" class="form-control"/>
+                    <ValidationMessage For="@(() =>u.Firstname)" />
+                </div>
+                <div class="form-group">
+                    <label>Last Name</label>
+                    <InputText @bind-Value="u.Lastname" class="form-control"/>
+                    <ValidationMessage For="@(() => u.Lastname)" />
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <InputText @bind-Value="u.Email" class="form-control"/>
+                    <ValidationMessage For="@(() => u.Email)" />
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <InputText type="@TxtType" @bind-Value="u.Password" class="form-control"/>
+                    <ValidationMessage For="@(() => u.Password)" />
+                        <span class='oi oi-eye' @onclick="ShowPassword"></span> 
+                </div>
+                <div class="form-group">
+                    <label>Confirm Password</label>
+                    <InputText type="password" @bind-Value="Password" class="form-control"/>
+                    <ValidationMessage For="@(() => u.Password)" />
+                        <span class='oi oi-eye' @onclick="ShowPassword"></span> 
+                </div>
+              <button class="btn btn-primary">
+                    @if (loading)
+                    {
+                        <span class="spinner-border spinner-border-sm mr-1"></span>
+                    }
+                    Sign Up
+                </button>
+                @if (!string.IsNullOrEmpty(error)) 
+                {
+                    <div class="alert alert-danger mt-3 mb-0">@error</div>
+                }
+            </EditForm>
+                </div>
+                </div>
+}
+@code 
+{
+    private CreateUserRequest u = new CreateUserRequest();
+    private string Password;
+    private UserModel user = new UserModel();
+    private HttpResponseMessage response = new HttpResponseMessage();
+    private AuthenticateResponse res= new AuthenticateResponse();
+    private string r;
+    private string s;
+    private bool loading;
+    private string error;
+    public string TxtType = "password"; 
+
+    public void ShowPassword() 
+    { 
+        if(this.TxtType== "password") 
+        { 
+            this.TxtType = "text"; 
+        } 
+        else 
+        { 
+            this.TxtType = "password"; 
+        } 
+    } 
+    private async void HandleValidSubmit()
+    {
+        loading = true;
+        try
+        {
+            if (Password == u.Password)
+            {
+                response = await Http.PostAsJsonAsync<CreateUserRequest>("https://localhost:7269/Users/Create", u);
+                r = await response.Content.ReadAsStringAsync();
+                res = JsonConvert.DeserializeObject<AuthenticateResponse>(r);
+                await localStorage.SetItemAsync("token", res.Token);
+                navManager.NavigateTo("");
+            }
+            else
+            {
+                throw new ArgumentException("Your confirm password is not the same ");
+            }
+            // authService.Login(user);
+
+        }
+        catch (Exception ex)
+        {
+            error = ex.Message;
+            loading = false;
+            StateHasChanged();
+        }
+    }
+}

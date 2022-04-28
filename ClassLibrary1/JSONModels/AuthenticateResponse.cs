@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Business.JSONModels
 {
-    public class AuthenticateResponse
+    public class AuthenticateResponse : BaseModel
     {
         public Guid ID { get; set; }
         public string FirstName { get; set; }
@@ -15,6 +15,11 @@ namespace Business.JSONModels
         public Role Role { get; set; }
         public string Token { get; set; }
 
+
+        public AuthenticateResponse()
+        {
+            
+        }
         public AuthenticateResponse(User user, string token)
         {
             ID = user.Id;

@@ -1,0 +1,44 @@
+﻿@page "/post/delete"
+@using PresentationLayer.Helpers;
+@using System.Net.Http.Formatting;
+@inject HttpClient Http
+@inject IJWTService jwt
+@inject NavigationManager navManager
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+
+<EditForm Model="@postModel">
+                <InputSelect id="department" @bind-Value="Title" class="form-control">
+                     <option value=" ">  </option>
+                @foreach (var post in posts)
+                {
+                    <option value="@post.Title">@post.Title</option>
+                }
+            </InputSelect>
+            <button type="button" class="btn btn-danger" @onclick="Delete" data-dismiss="modal">
+                        Delete
+            </button>
+</EditForm>
+     
+
+@code {
+    private List<PostModel> posts = new List<PostModel>();
+    private PostModel postModel =new PostModel();
+    private PostModel pst =new PostModel();
+    public string Title{get; set; }
+    protected override async Task OnInitializedAsync()
+    {
+        posts = await Http.GetFromJsonAsync<List<PostModel>>("Post");
+    }
+
+
+    public async void Delete()
+    {
+        pst = posts.Find(d => d.Title == Title);
+        string s =await localStorage.GetItemAsync<string>("token");
+        pst.UserRole = jwt.GetRole(s);
+        response = await Http.DeleteAsJsonAsync<PostModel>("https://localhost:7269/Post/Delete/"+pst.Id, pst);
+        navManager.NavigateTo("");
+    }
+
+    private HttpResponseMessage response = new HttpResponseMessage();
+}

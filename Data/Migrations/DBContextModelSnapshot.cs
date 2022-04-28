@@ -22,29 +22,6 @@ namespace DataLayer.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-            modelBuilder.Entity("DataLayer.Models.Comment", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("AuthorId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("PostDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Text")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AuthorId");
-
-                    b.ToTable("Comments");
-                });
-
             modelBuilder.Entity("DataLayer.Models.Destinations", b =>
                 {
                     b.Property<Guid>("Id")
@@ -55,13 +32,29 @@ namespace DataLayer.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("Id");
 
+                    b.HasIndex("Name")
+                        .IsUnique();
+
                     b.ToTable("Destinations");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("cf6f2ea9-6a78-4d0d-a7bf-bd00ef67e374"),
+                            City = "Plovdiv",
+                            Description = "In Plovdiv",
+                            Name = "Ancient Theathre"
+                        });
                 });
 
             modelBuilder.Entity("DataLayer.Models.Excursion", b =>
@@ -89,6 +82,17 @@ namespace DataLayer.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Excursions");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("57ba3b75-3e64-45f6-a58e-75220c139eff"),
+                            CreationDate = new DateTime(2022, 4, 18, 21, 48, 57, 690, DateTimeKind.Local).AddTicks(5556),
+                            EndsOnDate = new DateTime(2022, 4, 18, 0, 0, 0, 0, DateTimeKind.Local),
+                            Name = "Plovdiv",
+                            Price = 14m,
+                            StartsOnDate = new DateTime(2022, 4, 18, 0, 0, 0, 0, DateTimeKind.Local)
+                        });
                 });
 
             modelBuilder.Entity("DataLayer.Models.Like", b =>
@@ -102,6 +106,36 @@ namespace DataLayer.Migrations
                     b.HasKey("UserId", "PostId");
 
                     b.ToTable("Likes");
+                });
+
+            modelBuilder.Entity("DataLayer.Models.Post", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("AuthorId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("PostDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AuthorId");
+
+                    b.HasIndex("Title")
+                        .IsUnique();
+
+                    b.ToTable("Posts");
                 });
 
             modelBuilder.Entity("DataLayer.Models.User", b =>
@@ -149,12 +183,12 @@ namespace DataLayer.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("25bbc3cf-0f07-4d93-a5cc-6c3321859fa1"),
-                            CreationDate = new DateTime(2022, 4, 1, 14, 22, 34, 604, DateTimeKind.Local).AddTicks(3627),
+                            Id = new Guid("4ec90d27-6a1f-43b5-bbbf-c22f52d7e381"),
+                            CreationDate = new DateTime(2022, 4, 18, 21, 48, 56, 968, DateTimeKind.Local).AddTicks(6047),
                             Email = "admin@gmail.com",
                             Firstname = "Ad",
                             Lastname = "min",
-                            PasswordHash = "$2a$11$BjqW.Mt0TAJyND9uCzIy1.bv/6CXgPn4zhDspwI8DuIEOoo4rQUle",
+                            PasswordHash = "$2a$11$RWyB6Jg/7aayKoY9.MipOeYYvg9ol7Ro3RtBe5aVFooFWvtlA7Frm",
                             Role = 0,
                             Username = "Admin"
                         });
@@ -190,7 +224,7 @@ namespace DataLayer.Migrations
                     b.ToTable("ExcursionUser");
                 });
 
-            modelBuilder.Entity("DataLayer.Models.Comment", b =>
+            modelBuilder.Entity("DataLayer.Models.Post", b =>
                 {
                     b.HasOne("DataLayer.Models.User", "Author")
                         .WithMany("Comments")

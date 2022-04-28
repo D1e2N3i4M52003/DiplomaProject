@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Business.JSONModels
+namespace Business.JSONModels 
 {
-    public class JSONMessage
+    public class JSONMessage: BaseModel
     {
         public string Message { get; set; }
 

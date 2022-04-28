@@ -1,0 +1,64 @@
+﻿@page "/post/create"
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor context;
+@inject HttpClient Http
+@inject IJWTService jwt
+@inject NavigationManager navManager
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+
+<PageTitle>Create</PageTitle>
+
+
+    <div class="card">
+        <h4 class="card-header">Create</h4>
+        <div class="card-body">
+            <EditForm Model="@post" OnValidSubmit="HandleValidSubmit">
+                <DataAnnotationsValidator />
+                <div class="form-group">
+                    <label>Title</label>
+                    <InputText @bind-Value="post.Title" class="form-control" />
+                    <ValidationMessage For="@(() => post.Title)" />
+                </div>
+                <div class="form-group">
+                    <label>Text</label>
+                    <InputTextArea @bind-Value="post.Text" class="form-control" />
+                    <ValidationMessage For="@(() => post.Text)" />
+                </div>
+                <button class="btn btn-primary">
+                    @if (loading) {
+                        <span class="spinner-border spinner-border-sm mr-1"></span>
+                    }
+                    Create
+                </button>
+                @if (!string.IsNullOrEmpty(error)) {
+                    <div class="alert alert-danger mt-3 mb-0">@error</div>
+                }
+            </EditForm>
+        </div>
+    </div>
+
+@code {
+    private PostModel post = new PostModel();
+    private HttpResponseMessage response = new HttpResponseMessage();
+    private bool loading;
+    private string error;
+    private async void HandleValidSubmit()
+    {
+        loading = true;
+        try
+        {
+            string s =await localStorage.GetItemAsync<string>("token");
+            post.UserRole = jwt.GetRole(s);
+            post.AuthorId = jwt.GetId(s);
+            post.PostDate = DateTime.Now;
+            response = await Http.PostAsJsonAsync<PostModel>("https://localhost:7269/Post/Create", post);
+            navManager.NavigateTo("");
+
+        }
+        catch (Exception ex)
+        {
+            error = ex.Message;
+            loading = false;
+            StateHasChanged();
+        }
+    }
+}

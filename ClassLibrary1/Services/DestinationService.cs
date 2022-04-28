@@ -28,6 +28,7 @@ namespace Business.Services
                 Id = Guid.NewGuid(),
                 City = model.City,
                 Name = model.Name,
+                Description = model.Description,
             };
             await _repository.CreateAsync(destination);
         }
@@ -40,6 +41,7 @@ namespace Business.Services
 
 
             destination.City = model.City;
+            destination.Description = model.Description;
             destination.Name = model.Name;
             
 
@@ -51,27 +53,32 @@ namespace Business.Services
             Destinations? destination = await _repository.GetByIdAsync(id);
             if (destination is null)
             {
-                throw new ArgumentException("No such user exists!");
+                throw new ArgumentException("No such destination exists!");
             }
             DestinationModel destinationModel = new DestinationModel
             {
+                Id = destination.Id,
                 City = destination.City,
                 Name = destination.Name,
+                Description = destination.Description,
             };
             return destinationModel;
         }
 
         public async Task<DestinationModel> GetByAsync(Expression<Func<Destinations, bool>> filter)
         {
-            Destinations? destination = await _repository.GetByAsync(filter);
-            if (destination is null)
+            ICollection<Destinations?> destinations = await _repository.GetByAsync(filter);
+            if (destinations.Count==0)
             {
                 throw new ArgumentException("No such user exists!");
             }
+            Destinations destination = destinations.First();
             DestinationModel destinationModel = new DestinationModel
             {
+                Id = destination.Id,
                 City = destination.City,
                 Name = destination.Name,
+                Description = destination.Description,
             };
             return destinationModel;
         }
@@ -84,14 +91,16 @@ namespace Business.Services
 
         public async Task<List<DestinationModel>> GetAll()
         {
-            List<Destinations> destinations = await _repository.GetAll().Select(d => d).ToListAsync();
+            List<Destinations> destinations = _repository.GetAll().Result.ToList();
             List<DestinationModel> destinationsModel = new List<DestinationModel>();
             foreach (var destination in destinations)
             {
                 DestinationModel destinationModel = new DestinationModel
                 {
+                    Id = destination.Id,
                     City = destination.City,
                     Name = destination.Name,
+                    Description = destination.Description,
                 };
                 destinationsModel.Add(destinationModel);
             }
@@ -99,14 +108,16 @@ namespace Business.Services
         }
         public async Task<List<DestinationModel>> GetAll(Expression<Func<Destinations, bool>> filter)
         {
-            List<Destinations> destinations = await _repository.GetAll(filter).Select(d => d).ToListAsync();
+            ICollection<Destinations> destinations = await _repository.GetAll(filter);
             List<DestinationModel> destinationsModel = new List<DestinationModel>();
             foreach (var destination in destinations)
             {
                 DestinationModel destinationModel = new DestinationModel
                 {
+                    Id = destination.Id,
                     City = destination.City,
                     Name = destination.Name,
+                    Description = destination.Description,
                 };
                 destinationsModel.Add(destinationModel);
             }

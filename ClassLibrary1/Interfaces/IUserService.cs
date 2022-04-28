@@ -12,16 +12,15 @@ namespace Business.Interfaces
 {
     public interface IUserService
     {
-        Task<AuthenticateResponse> Authenticate(AuthenticateRequest model);
         Task<List<UserModel>> GetAll();
         Task<List<UserModel>> GetAll(Expression<Func<User, bool>> filter);
-        Task<UserModel> GetById(Guid id);
+        Task<EditUserRequest> GetById(Guid id);
         Task<UserModel> GetByAsync(Expression<Func<User, bool>> filter);
-        Task CreateAsync(CreateUserRequest model);
-        Task EditAsync(EditUserRequest model);
-        Task ChangePassword(Guid id, ChangePasswordRequest model);
+        ValueTask CreateAsync(CreateUserRequest model);
+        ValueTask EditAsync(EditUserRequest model);
+        ValueTask ChangePassword(Guid id, ChangePasswordRequest model);
         Task DeleteAsync(Guid id);
-        Task ReserveExcursion(ExcursionModel model, Guid id);
+        Task ReserveExcursion(Guid userId, Guid excursionId);
 
     }
 }

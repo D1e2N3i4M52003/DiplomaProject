@@ -1,0 +1,40 @@
+﻿@page "/posts"
+@using System.ComponentModel.DataAnnotations
+@using Business.JSONModels
+@using Newtonsoft.Json;
+@using PresentationLayer.Services;
+@inject HttpClient Http
+@inject IJWTService jwtService
+@inject IAuthenticationService authService
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+
+<PageTitle>Новини</PageTitle>
+
+<h1>Новини</h1>
+
+
+           @foreach (var post in posts)
+           {
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            @post.Title
+                        </h5>
+                        <p>@post.PostDate</p>
+                        <p class="card-text">@post.Text</p>
+                    </div>
+                
+           }
+@code {
+    string s;
+    private List<PostModel> posts = new List<PostModel>();
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        s = await localStorage.GetItemAsync<string>("token");
+        if(s!=null){
+        if (jwtService.GetExpiryTimestamp(s) <= DateTime.Now)
+        { await authService.Logout(); }}
+        posts = await Http.GetFromJsonAsync<List<PostModel>>("Post");
+    } 
+}

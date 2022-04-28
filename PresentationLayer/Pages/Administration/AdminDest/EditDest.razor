@@ -1,0 +1,95 @@
+﻿@page "/destedit"
+@using PresentationLayer.Helpers;
+@using System.Net.Http.Formatting;
+@inject HttpClient Http
+@inject IJWTService jwt
+@inject NavigationManager navManager
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+
+<EditForm Model="@destinationModel">
+                <InputSelect id="department" @bind-Value="Name" class="form-control">
+                     <option value=" ">  </option>
+                @foreach (var destination in destinations)
+                {
+                    <option value="@destination.Name">@destination.Name</option>
+                }
+            </InputSelect>
+            <button type="button" @onclick="Edit" data-dismiss="modal">
+                        Избери
+            </button>
+</EditForm>
+    <div class="card">
+        <h4 class="card-header">Променане на дестинация</h4>
+        <div class="card-body">
+            <EditForm Model="@dest" OnValidSubmit="HandleValidSubmit">
+                <DataAnnotationsValidator />
+                <div class="form-group">
+                    <label>Име</label>
+                    <InputText @bind-Value="dest.Name" class="form-control" placeholder="@dest.Name" />
+                    <ValidationMessage For="@(() => dest.Name)" />
+                </div>
+                <div class="form-group">
+                    <label>Град</label>
+                    <InputText @bind-Value="dest.City" class="form-control" placeholder="@dest.City"/>
+                    <ValidationMessage For="@(() => dest.City)" />
+                </div>
+                <div class="form-group">
+                    <label>Описание</label>
+                    <InputTextArea @bind-Value="dest.Description" class="form-control" placeholder="@dest.Description"/>
+                    <ValidationMessage For="@(() => dest.Description)" />
+                </div>
+                <button class="btn btn-primary">
+                    @if (loading) {
+                        <span class="spinner-border spinner-border-sm mr-1"></span>
+                    }
+                    Промени
+                </button>
+                @if (!string.IsNullOrEmpty(error)) {
+                    <div class="alert alert-danger mt-3 mb-0">@error</div>
+                }
+            </EditForm>
+        </div>
+    </div>
+     
+
+@code {
+    private List<DestinationModel> destinations = new List<DestinationModel>();
+    private DestinationModel destinationModel =new DestinationModel();
+    private DestinationModel dest =new DestinationModel();
+    [Parameter] public string Name{get; set; }
+    protected override async Task OnInitializedAsync()
+    {
+        destinations = await Http.GetFromJsonAsync<List<DestinationModel>>("Destination");
+    }
+
+
+    public async void Edit()
+    {
+        dest = destinations.Find(d => d.Name == Name);
+
+    }
+
+    private HttpResponseMessage response = new HttpResponseMessage();
+    private bool loading;
+    private string error;
+    
+    
+
+    private async void HandleValidSubmit()
+    {
+        loading = true;
+        try
+        {
+            string s =await localStorage.GetItemAsync<string>("token");
+            dest.UserRole = jwt.GetRole(s);
+            response = await HttpService.PatchAsJsonAsync<DestinationModel>(Http,"https://localhost:7269/Destination/Edit", dest);
+            navManager.NavigateTo("");
+        }
+        catch (Exception ex)
+        {
+            error = ex.Message;
+            loading = false;
+            StateHasChanged();
+        }
+    }
+}

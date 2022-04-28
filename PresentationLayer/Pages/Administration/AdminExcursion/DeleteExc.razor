@@ -1,0 +1,45 @@
+﻿@page "/excursion/delete"
+@using PresentationLayer.Helpers;
+@using System.Net.Http.Formatting;
+@inject HttpClient Http
+@inject IJWTService jwt
+@inject NavigationManager navManager
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+
+<EditForm Model="@excursionModel">
+                <InputSelect id="department" @bind-Value="Name" class="form-control">
+                     <option value=" ">  </option>
+                @foreach (var excursion in excursions)
+                {
+                    <option value="@excursion.Name">@excursion.Name</option>
+                }
+            </InputSelect>
+            <button type="button" class="btn btn-danger" @onclick="Delete" data-dismiss="modal">
+                        Delete
+            </button>
+</EditForm>
+
+     
+
+@code {
+    private List<ExcursionModel> excursions = new List<ExcursionModel>();
+    private ExcursionModel excursionModel =new ExcursionModel();
+    private ExcursionModel exc =new ExcursionModel();
+    public string Name{get; set; }
+    protected override async Task OnInitializedAsync()
+    {
+        excursions = await Http.GetFromJsonAsync<List<ExcursionModel>>("Excursion");
+    }
+
+
+    public async void Delete()
+    {
+        exc = excursions.Find(d => d.Name == Name);
+        string s =await localStorage.GetItemAsync<string>("token");
+        exc.UserRole = jwt.GetRole(s);
+        response = await Http.DeleteAsJsonAsync<ExcursionModel>("https://localhost:7269/Excursion/Delete", exc);
+        navManager.NavigateTo("");
+    }
+
+    private HttpResponseMessage response = new HttpResponseMessage();
+}

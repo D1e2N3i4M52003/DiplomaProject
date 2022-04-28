@@ -1,0 +1,135 @@
+is_global = true
+build_property.TargetFramework = net6.0
+build_property.TargetPlatformMinVersion = 
+build_property.UsingMicrosoftNETSdkWeb = 
+build_property.ProjectTypeGuids = 
+build_property.InvariantGlobalization = false
+build_property.PlatformNeutralAssembly = 
+build_property._SupportedPlatformList = browser
+build_property.EnableSingleFileAnalyzer = 
+build_property.EnableTrimAnalyzer = true
+build_property.IncludeAllContentForSelfExtract = 
+build_property.RootNamespace = PresentationLayer
+build_property.RootNamespace = PresentationLayer
+build_property.ProjectDir = C:\Users\PC\source\repos\TouristAgency\PresentationLayer\
+build_property.RazorLangVersion = 6.0
+build_property.SupportLocalizedComponentNames = 
+build_property.GenerateRazorMetadataSourceChecksumAttributes = 
+build_property.MSBuildProjectDirectory = C:\Users\PC\source\repos\TouristAgency\PresentationLayer
+build_property._RazorSourceGeneratorDebug = 
+
+[C:/Users/PC/source/repos/TouristAgency/PresentationLayer/App.razor]
+build_metadata.AdditionalFiles.TargetPath = QXBwLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/PC/source/repos/TouristAgency/PresentationLayer/Pages/Administration/AdminDest/CreateDest.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQWRtaW5pc3RyYXRpb25cQWRtaW5EZXN0XENyZWF0ZURlc3QucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/PC/source/repos/TouristAgency/PresentationLayer/Pages/Administration/AdminDest/DeleteDest.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQWRtaW5pc3RyYXRpb25cQWRtaW5EZXN0XERlbGV0ZURlc3QucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/PC/source/repos/TouristAgency/PresentationLayer/Pages/Administration/AdminDest/EditDest.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQWRtaW5pc3RyYXRpb25cQWRtaW5EZXN0XEVkaXREZXN0LnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/PC/source/repos/TouristAgency/PresentationLayer/Pages/Administration/AdminExcursion/ChooseDest.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQWRtaW5pc3RyYXRpb25cQWRtaW5FeGN1cnNpb25cQ2hvb3NlRGVzdC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/PC/source/repos/TouristAgency/PresentationLayer/Pages/Administration/AdminExcursion/CreateExc.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQWRtaW5pc3RyYXRpb25cQWRtaW5FeGN1cnNpb25cQ3JlYXRlRXhjLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/PC/source/repos/TouristAgency/PresentationLayer/Pages/Administration/AdminExcursion/DeleteExc.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQWRtaW5pc3RyYXRpb25cQWRtaW5FeGN1cnNpb25cRGVsZXRlRXhjLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/PC/source/repos/TouristAgency/PresentationLayer/Pages/Administration/AdminExcursion/EditExc.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQWRtaW5pc3RyYXRpb25cQWRtaW5FeGN1cnNpb25cRWRpdEV4Yy5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/PC/source/repos/TouristAgency/PresentationLayer/Pages/Administration/AdminPost/CreatePost.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQWRtaW5pc3RyYXRpb25cQWRtaW5Qb3N0XENyZWF0ZVBvc3QucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/PC/source/repos/TouristAgency/PresentationLayer/Pages/Administration/AdminPost/DeletePost.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQWRtaW5pc3RyYXRpb25cQWRtaW5Qb3N0XERlbGV0ZVBvc3QucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/PC/source/repos/TouristAgency/PresentationLayer/Pages/Administration/AdminPost/EditPost.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQWRtaW5pc3RyYXRpb25cQWRtaW5Qb3N0XEVkaXRQb3N0LnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/PC/source/repos/TouristAgency/PresentationLayer/Pages/Administration/AdminUser/ChangeRole.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQWRtaW5pc3RyYXRpb25cQWRtaW5Vc2VyXENoYW5nZVJvbGUucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/PC/source/repos/TouristAgency/PresentationLayer/Pages/Counter.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQ291bnRlci5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/PC/source/repos/TouristAgency/PresentationLayer/Pages/Destinations/AboutUs.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRGVzdGluYXRpb25zXEFib3V0VXMucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/PC/source/repos/TouristAgency/PresentationLayer/Pages/Destinations/Contact.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRGVzdGluYXRpb25zXENvbnRhY3QucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/PC/source/repos/TouristAgency/PresentationLayer/Pages/Destinations/Destinations.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRGVzdGluYXRpb25zXERlc3RpbmF0aW9ucy5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/PC/source/repos/TouristAgency/PresentationLayer/Pages/Destinations/Dest/ExcDetail.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRGVzdGluYXRpb25zXERlc3RcRXhjRGV0YWlsLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/PC/source/repos/TouristAgency/PresentationLayer/Pages/Destinations/Excursions.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRGVzdGluYXRpb25zXEV4Y3Vyc2lvbnMucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/PC/source/repos/TouristAgency/PresentationLayer/Pages/Destinations/Post.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRGVzdGluYXRpb25zXFBvc3QucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/PC/source/repos/TouristAgency/PresentationLayer/Pages/FetchData.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRmV0Y2hEYXRhLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/PC/source/repos/TouristAgency/PresentationLayer/Pages/Index.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcSW5kZXgucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/PC/source/repos/TouristAgency/PresentationLayer/Pages/Login/Login.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcTG9naW5cTG9naW4ucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/PC/source/repos/TouristAgency/PresentationLayer/Pages/Profile/Profile.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcUHJvZmlsZVxQcm9maWxlLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/PC/source/repos/TouristAgency/PresentationLayer/Pages/SignUp/SignUp.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcU2lnblVwXFNpZ25VcC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/PC/source/repos/TouristAgency/PresentationLayer/Shared/SurveyPrompt.razor]
+build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXFN1cnZleVByb21wdC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/PC/source/repos/TouristAgency/PresentationLayer/_Imports.razor]
+build_metadata.AdditionalFiles.TargetPath = X0ltcG9ydHMucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/PC/source/repos/TouristAgency/PresentationLayer/Pages/Administration/Administration.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQWRtaW5pc3RyYXRpb25cQWRtaW5pc3RyYXRpb24ucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = b-uymuesb7kr
+
+[C:/Users/PC/source/repos/TouristAgency/PresentationLayer/Shared/MainLayout.razor]
+build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXE1haW5MYXlvdXQucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = b-pcij6lvp3o
+
+[C:/Users/PC/source/repos/TouristAgency/PresentationLayer/Shared/NavMenu.razor]
+build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXE5hdk1lbnUucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = b-6wuojei5zg

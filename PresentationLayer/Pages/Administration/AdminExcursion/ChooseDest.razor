@@ -1,0 +1,81 @@
+﻿@page "/adddest"
+@using PresentationLayer.Helpers;
+@using System.Net.Http.Formatting;
+@inject HttpClient Http
+@inject IJWTService jwt
+@inject NavigationManager navManager
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+
+<EditForm Model="@excursionModel">
+                <InputSelect id="department" @bind-Value="Name" class="form-control">
+                     <option value=" ">  </option>
+                @foreach (var excursion in excursions)
+                {
+                    <option value="@excursion.Name">@excursion.Name</option>
+                }
+            </InputSelect>
+            @foreach (var destination in destinations)
+                {
+            <label> @destination.Name</label>
+            
+                     <InputCheckbox @bind-Value="models.Find(x=>x.value==destination.Name).key">
+                     <option value=" ">  </option>
+                     <br>
+                
+                    </InputCheckbox>
+                }
+           
+            <button type="button" class="btn btn-danger" @onclick="Add" data-dismiss="modal">
+                        Избери екскурзия
+            </button>
+</EditForm>
+@code {
+    private List<ExcursionModel> excursions = new List<ExcursionModel>();
+    private List<DestinationModel> destinations = new List<DestinationModel>();
+    private ExcursionModel excursionModel =new ExcursionModel();
+    private ExcursionModel exc =new ExcursionModel();
+    public string Name{get; set; }
+    public class DictModel
+    {
+        public bool key{get; set; }
+        public string value{get; set; }
+        public DictModel(bool key, string value)
+        {
+            this.key=key;
+            this.value = value;
+        }
+    }
+    List<DictModel> models = new List<DictModel>();
+    protected override async Task OnInitializedAsync()
+    {
+        excursions = await Http.GetFromJsonAsync<List<ExcursionModel>>("Excursion");
+        excursionModel.Destinations = new List<DestinationModel>();
+        destinations = await Http.GetFromJsonAsync<List<DestinationModel>>("Destination");
+        foreach(var destination in destinations)
+        {
+            DictModel model = new DictModel(false, destination.Name);
+            models.Add(model);
+        }
+
+    }
+
+    
+    private HttpResponseMessage response = new HttpResponseMessage();
+    public async void Add()
+    {
+        exc = excursions.Find(d => d.Name == Name);
+        string s =await localStorage.GetItemAsync<string>("token");
+        foreach (var model in models)
+        {
+            if(model.key == true){ 
+            DestinationModel destination = destinations.Find(d => d.Name == model.value);
+            destination.UserRole = jwt.GetRole(s);
+            exc.Destinations.Add(destination); }
+
+
+        }
+        exc.UserRole = jwt.GetRole(s);
+        response = await HttpService.PatchAsJsonAsync<ExcursionModel>(Http,"https://localhost:7269/Excursion/Edit", exc);
+        navManager.NavigateTo("");
+    }
+}

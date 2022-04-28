@@ -1,0 +1,64 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+	  
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Remove="Pages\Destinations.razor" />
+    <Content Remove="Pages\Destinations\ExcDetail.razor" />
+    <Content Remove="Pages\Excursions\Excursions.razor" />
+    <Content Remove="Pages\Excursions\Post.razor" />
+    <Content Remove="Pages\Login.razor" />
+    <Content Remove="Pages\Login\SignUp.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Pages\Destinations\AboutUs.razor" />
+    <None Include="Pages\Destinations\Contact.razor" />
+    <None Include="Pages\Destinations\Dest\ExcDetail.razor" />
+    <None Include="Pages\Destinations\Destinations.razor" />
+    <None Include="Pages\Destinations\Excursions.razor" />
+    <None Include="Pages\Destinations\Post.razor" />
+    <None Include="Pages\Login\Login.razor" />
+    <None Include="Pages\SignUp\SignUp.razor" />
+    <None Include="Pages\Profile\Profile.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Blazored.LocalStorage" Version="4.2.0" />
+    <PackageReference Include="Blazored.SessionStorage" Version="2.2.0" />
+    <PackageReference Include="Hangfire.Core" Version="1.7.28" />
+    <PackageReference Include="JWT" Version="8.9.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="6.0.4" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="6.0.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="6.0.2" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.2.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="System.Net.Http" Version="4.3.4" />
+    <PackageReference Include="System.Net.Http.Formatting.Extension" Version="5.2.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ClassLibrary1\BusinessLayer.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Pages\Login.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Pages\Login.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Pages\Excursions\" />
+  </ItemGroup>
+
+ 
+
+</Project>

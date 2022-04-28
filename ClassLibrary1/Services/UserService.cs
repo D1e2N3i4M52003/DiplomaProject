@@ -1,6 +1,4 @@
-﻿using Business.Authorization;
-using Business.Helpers;
-using Business.JSONModels;
+﻿using Business.JSONModels;
 using DataLayer.Models;
 using Business.Interfaces;
 using DataLayer.Interfaces;
@@ -20,37 +18,16 @@ namespace Business.Services
     {
         private readonly IUserRepository _repository;
         private readonly IExcursionRepository _excursionRepository;
-        private readonly IJwtUtils _jwtUtils;
-        private readonly AppSettings _appSettings;
+        private readonly IExcursionService _excursionService;
 
-        public UserService(IUserRepository repository, IJwtUtils jwtUtils, IOptions<AppSettings> appSettings, IExcursionRepository excursionRepository)
+        public UserService(IUserRepository repository, IExcursionRepository excursionRepository, IExcursionService excursionService)
         {
             _repository = repository;
-            _jwtUtils = jwtUtils;
-            _appSettings = appSettings.Value;
             _excursionRepository = excursionRepository;
+            _excursionService = excursionService;
         }
 
-        public async Task<AuthenticateResponse> Authenticate(AuthenticateRequest model)
-        {
-            User? user = await _repository.GetByAsync(x => x.Username == model.Username);
-
-            if (user is null)
-            {
-                throw new ArgumentException("No such user exists!");
-            }
-
-            // validate
-            if (!BCryptNet.Verify(model.Password, user.PasswordHash))
-                throw new AppException("Username or password is incorrect");
-
-            // authentication successful so generate jwt token
-            var jwtToken = _jwtUtils.GenerateJwtToken(user);
-
-            return new AuthenticateResponse(user, jwtToken);
-        }
-
-        public async Task CreateAsync(CreateUserRequest model)
+        public async ValueTask CreateAsync(CreateUserRequest model)
         {
             User user = new User
             {
@@ -60,50 +37,58 @@ namespace Business.Services
                 Lastname = model.Lastname,
                 Email = model.Email,
                 CreationDate = DateTime.Now,
-                Role = (Role)Enum.Parse(typeof(Role), "Moderator"),
+                Role = (Role)Enum.Parse(typeof(Role), "User"),
                 PasswordHash = BCryptNet.HashPassword(model.Password)
             };
             await _repository.CreateAsync(user);
         }
 
-        public async Task EditAsync(EditUserRequest model)
+        public async ValueTask EditAsync(EditUserRequest model)
         {
-
+            Enum.TryParse(model.UserRole, out Role userRole);
             User user = new User
             {
                 Username = model.Username,
                 Firstname = model.Firstname,
                 Lastname = model.Lastname,
-                Email = model.Email
+                Email = model.Email,
+                Role = userRole
             };
 
             await _repository.UpdateAsync(user);
         }
 
-        public async Task<UserModel> GetById(Guid id)
+        public async Task<EditUserRequest> GetById(Guid id)
         {
             User? user = await _repository.GetByIdAsync(id);
             if (user is null)
             {
                 throw new ArgumentException("No such user exists!");
             }
-            UserModel userModel = new UserModel
+            EditUserRequest userModel = new EditUserRequest
             {
                 Username = user.Username,
                 Firstname = user.Firstname,
                 Lastname = user.Lastname,
-                Email = user.Email
+                Email = user.Email,
+                Excursions = new List<ExcursionModel>()
             };
+            foreach(var excursion in user.Excursions)
+            {
+                ExcursionModel excursionModel = await _excursionService.GetById(excursion.Id);
+                userModel.Excursions.Add(excursionModel);
+            }
             return userModel;
         }
 
         public async Task<UserModel> GetByAsync(Expression<Func<User, bool>> filter)
         {
-            User? user = await _repository.GetByAsync(filter);
-            if (user is null)
+            ICollection<User?> users = await _repository.GetByAsync(filter);
+            if (users.Count==0)
             {
                 throw new ArgumentException("No such user exists!");
             }
+            User user = users.First();
             UserModel userModel = new UserModel
             {
                 Username = user.Username,
@@ -121,7 +106,7 @@ namespace Business.Services
 
         public async Task<List<UserModel>> GetAll()
         {
-            List<User> users = await _repository.GetAll().Select(u => u).ToListAsync();
+            List<User> users = _repository.GetAll().Result.ToList();
             List<UserModel> usersModel = new List<UserModel>();
             foreach (var user in users)
             {
@@ -138,7 +123,7 @@ namespace Business.Services
         }
          public async Task<List<UserModel>> GetAll(Expression<Func<User, bool>> filter)
         {
-            List<User> users = await _repository.GetAll(filter).Select(u => u).ToListAsync();
+            ICollection<User> users = await _repository.GetAll(filter);
             List<UserModel> usersModel = new List<UserModel>();
             foreach (var user in users)
             {
@@ -154,10 +139,14 @@ namespace Business.Services
             return usersModel;
         }
 
-        public async Task ChangePassword(Guid id, ChangePasswordRequest model)
+        public async ValueTask ChangePassword(Guid id, ChangePasswordRequest model)
         {
-            User? user = await _repository.GetByAsync(x => x.Id == id);
-
+            ICollection<User?> users = await _repository.GetByAsync(x => x.Id == id);
+            if (users.Count == 0)
+            {
+                throw new ArgumentException("No such user exists!");
+            }
+            User user = users.First();
             try 
             {
                 if (user.PasswordHash == BCryptNet.HashPassword(model.OldPassword))
@@ -176,20 +165,24 @@ namespace Business.Services
             }
         }
 
-        public async Task ReserveExcursion(ExcursionModel model,Guid id)
+        public async Task ReserveExcursion(Guid userId,Guid excursionId)
         {
-            Excursion? excursion = await _excursionRepository.GetByIdAsync(model.Id);
+            Excursion? excursion = await _excursionRepository.GetByIdAsync(excursionId);
             if (excursion is null)
             {
                 throw new ArgumentException("No such excursion exists!");
             }
-            User? user = await _repository.GetByIdAsync(model.Id);
+            User? user = await _repository.GetByIdAsync(userId);
             if (user is null)
             {
                 throw new ArgumentException("No such user exists!");
             }
-            excursion.Participants.Add(user);
+            if(user.Excursions==null)
+            {
+                user.Excursions = new List<Excursion>();
+            }
             user.Excursions.Add(excursion);
+            await _repository.UpdateAsync(user);
         }
 
     }

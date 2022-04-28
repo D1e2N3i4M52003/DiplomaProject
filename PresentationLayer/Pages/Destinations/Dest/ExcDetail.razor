@@ -1,0 +1,63 @@
+﻿@page "/excursion/{id}"
+@using System.ComponentModel.DataAnnotations
+@using Business.JSONModels
+@using Newtonsoft.Json;
+@using PresentationLayer.Services;
+@inject HttpClient Http
+@inject IJWTService jwtService
+@inject IAuthenticationService authService
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+@using Microsoft.AspNetCore.WebUtilities
+@inject NavigationManager navManager
+
+
+                <div class="card my-4">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            @u.Name - 
+                        <small class="card-subtitle">@u.Price</small>
+                        </h5>
+        @if (u.Destinations != null)
+        {
+            @foreach (var dest in u.Destinations)
+            {
+                <p class="card-text">
+                    @dest.Name
+                </p>
+            }
+
+        }
+        <p>@u.StartsOnDate - @u.EndsOnDate</p>
+        <button class="btn btn-primary" @onclick="Reserve">
+                   
+                    Reserve
+                </button>
+                    </div>
+                </div>
+
+
+@code {
+
+    private HttpResponseMessage response = new HttpResponseMessage();
+    private string r;
+    private string t;
+    ExcursionModel u = new ExcursionModel();
+    [Parameter]
+    public string id { get; set; }
+    protected override async Task OnInitializedAsync()
+    {
+        u.Destinations = new List<DestinationModel>();
+        response = await Http.PostAsJsonAsync<string>("Excursion/"+id, id);
+        r = await response.Content.ReadAsStringAsync();
+        u = JsonConvert.DeserializeObject<ExcursionModel>(r);
+    }
+    private async Task Reserve()
+    {
+        string s =await localStorage.GetItemAsync<string>("token");
+        if(s==null) navManager.NavigateTo("login");
+        ReserveModel model = new ReserveModel();
+        model.UserId = jwtService.GetId(s);
+        model.ExcursionId = Guid.Parse(id);
+        response = await HttpService.PatchAsJsonAsync<ReserveModel>(Http, "Users/Reserve", model);
+    }
+} 

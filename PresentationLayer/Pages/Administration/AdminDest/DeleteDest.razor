@@ -1,0 +1,45 @@
+﻿@page "/destination/delete"
+@using PresentationLayer.Helpers;
+@using System.Net.Http.Formatting;
+@inject HttpClient Http
+@inject IJWTService jwt
+@inject NavigationManager navManager
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+
+<EditForm Model="@destinationModel">
+                <InputSelect id="department" @bind-Value="Name" class="form-control">
+                     <option value=" ">  </option>
+                @foreach (var destination in destinations)
+                {
+                    <option value="@destination.Name">@destination.Name</option>
+                }
+            </InputSelect>
+            <button type="button" class="btn btn-danger" @onclick="Delete" data-dismiss="modal">
+                        Изтрий
+            </button>
+</EditForm>
+     
+
+@code {
+    private List<DestinationModel> destinations = new List<DestinationModel>();
+    private DestinationModel destinationModel =new DestinationModel();
+    private DestinationModel dest =new DestinationModel();
+    public string Name{get; set; }
+    private HttpResponseMessage response = new HttpResponseMessage();
+    protected override async Task OnInitializedAsync()
+    {
+        destinations = await Http.GetFromJsonAsync<List<DestinationModel>>("Destination");
+    }
+
+
+    public async void Delete()
+    {
+        dest = destinations.Find(d => d.Name == Name);
+        string s =await localStorage.GetItemAsync<string>("token");
+        dest.UserRole = jwt.GetRole(s);
+        response = await Http.DeleteAsJsonAsync<DestinationModel>("https://localhost:7269/Destination/Delete", dest);
+        navManager.NavigateTo("");
+    }
+    
+    
+}

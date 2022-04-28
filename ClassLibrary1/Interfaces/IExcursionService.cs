@@ -18,7 +18,6 @@ namespace Business.Interfaces
         Task DeleteAsync(Guid id);
         Task<List<ExcursionModel>> GetAll();
         Task<List<ExcursionModel>> GetAll(Expression<Func<Excursion, bool>> filter);
-        Task<List<DestinationModel>> GetAllDestinations(Guid id);
-        Task AddDestination(DestinationModel model);
+
     }
 }

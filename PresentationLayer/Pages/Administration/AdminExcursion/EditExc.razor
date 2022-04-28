@@ -1,0 +1,107 @@
+﻿@page "/excedit"
+@using PresentationLayer.Helpers;
+@using System.Net.Http.Formatting;
+@inject HttpClient Http
+@inject IJWTService jwt
+@inject NavigationManager navManager
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+
+<EditForm Model="@excursionModel">
+            <InputSelect id="excursion" @bind-Value="Name" class="form-control">
+                <option value=" ">  </option>
+                @foreach (var excursion in excursions)
+                {
+                    <option value="@excursion.Name">@excursion.Name</option>
+                }
+            </InputSelect>
+            <button type="button" @onclick="Edit" data-dismiss="modal">
+                        Edit
+            </button>
+</EditForm><h1>@Name</h1>
+    <div class="card">
+        <h4 class="card-header">Edit</h4>
+        <div class="card-body">
+            <EditForm Model="@exc" OnValidSubmit="HandleValidSubmit">
+                <DataAnnotationsValidator />
+                <div class="form-group">
+                    <label>Name</label>
+                    <InputText @bind-Value="exc.Name" class="form-control" placeholder="@exc.Name" />
+                    <ValidationMessage For="@(() => exc.Name)" />
+                </div>
+                <div class="form-group">
+                    <label>Price</label>
+                    <InputNumber @bind-Value="exc.Price" class="form-control" placeholder="@exc.Price"/>
+                    <ValidationMessage For="@(() =>exc.Price)" />
+                </div>
+                <div class="form-group">
+                    <label>Starting Date</label>
+                    <InputDate @bind-Value="exc.StartsOnDate" class="form-control" placeholder="@exc.StartsOnDate"/>
+                    <ValidationMessage For="@(() => exc.StartsOnDate)" />
+                </div>
+                <div class="form-group">
+                    <label>Ending Date</label>
+                    <InputDate @bind-Value="exc.EndsOnDate" class="form-control" placeholder="@exc.EndsOnDate"/>
+                    <ValidationMessage For="@(() => exc.EndsOnDate)" />
+                        @if(exc.EndsOnDate < exc.StartsOnDate)
+                        {
+                            <p class="alert-danger">The ending date mustn't be before the starting date</p>
+                        }
+                </div>
+              <button class="btn btn-primary">
+                    @if (loading) 
+                    {
+                        <span class="spinner-border spinner-border-sm mr-1"></span>
+                    }
+                    Edit
+                </button>
+                @if (!string.IsNullOrEmpty(error)) 
+                {
+                    <div class="alert alert-danger mt-3 mb-0">@error</div>
+                }
+            </EditForm>
+        </div>
+    </div>
+     
+
+@code {
+    private List<ExcursionModel> excursions = new List<ExcursionModel>();
+    private ExcursionModel excursionModel =new ExcursionModel();
+    private ExcursionModel exc =new ExcursionModel();
+    public string Name{get; set; }
+    protected override async Task OnInitializedAsync()
+    {
+        excursions = await Http.GetFromJsonAsync<List<ExcursionModel>>("Excursion");
+    }
+
+
+    public async void Edit()
+    {
+        exc = excursions.Find(d => d.Name == Name);
+
+    }
+
+    private HttpResponseMessage response = new HttpResponseMessage();
+    private bool loading;
+    private string error;
+    
+    
+
+    private async void HandleValidSubmit()
+    {
+        loading = true;
+        try
+        {
+            string s =await localStorage.GetItemAsync<string>("token");
+            exc.UserRole = jwt.GetRole(s);
+            response = await HttpService.PatchAsJsonAsync<ExcursionModel>(Http,"https://localhost:7269/Excursion/Edit", exc);
+            navManager.NavigateTo("");
+        }
+        catch (Exception ex)
+        {
+            error = ex.Message;
+            loading = false;
+            StateHasChanged();
+        }
+    }
+}
+}

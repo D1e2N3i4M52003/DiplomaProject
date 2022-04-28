@@ -27,7 +27,7 @@ namespace DataLayer.Models
         [Column(TypeName = "decimal(7,2)")]
         public decimal Price { get; set; }
 
-        public virtual List<Destinations> Destinations { get; set; }
+        public ICollection<Destinations> Destinations { get; set; }
 
         public virtual List<User> Participants { get; set; }
     }

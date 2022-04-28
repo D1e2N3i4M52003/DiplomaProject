@@ -12,10 +12,10 @@ namespace DataLayer.Interfaces
     {
         Task CreateAsync(T entity);
         Task DeleteAsync(Guid id);
-        IQueryable<T> GetAll();
-        IQueryable<T> GetAll(Expression<Func<T, bool>> filter);
-        ValueTask<T?> GetByIdAsync(Guid id);
-        ValueTask<T?> GetByAsync(Expression<Func<T, bool>> filter);
+        Task<ICollection<T>> GetAll();
+        Task<ICollection<T>> GetAll(Expression<Func<T, bool>> filter);
+        Task<T> GetByIdAsync(Guid id);
+        ValueTask<ICollection<T>> GetByAsync(Expression<Func<T, bool>> filter);
         Task UpdateAsync(T entity);
     }
 }

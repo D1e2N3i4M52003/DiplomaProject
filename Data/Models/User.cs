@@ -28,7 +28,7 @@ namespace DataLayer.Models
         [Required]
         public Role Role { get; set; }
 
-        public virtual ICollection<Comment> Comments { get; set; }
+        public virtual ICollection<Post> Posts { get; set; }
 
         public ICollection<Excursion> Excursions { get; set; }
 

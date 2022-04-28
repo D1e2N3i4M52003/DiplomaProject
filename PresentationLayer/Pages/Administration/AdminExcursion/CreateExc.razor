@@ -1,0 +1,74 @@
+﻿@page "/excursioncreate"
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor context;
+@inject HttpClient Http
+@inject IJWTService jwt
+@inject NavigationManager navManager
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+
+<PageTitle>Create</PageTitle>
+
+
+    <div class="card">
+        <h4 class="card-header">Create</h4>
+        <div class="card-body">
+            <EditForm Model="@excursion" OnValidSubmit="HandleValidSubmit">
+                <DataAnnotationsValidator />
+                <div class="form-group">
+                    <label>Name</label>
+                    <InputText @bind-Value="excursion.Name" class="form-control" />
+                    <ValidationMessage For="@(() => excursion.Name)" />
+                </div>
+                <div class="form-group">
+                    <label>Price</label>
+                    <InputNumber @bind-Value="excursion.Price" class="form-control" />
+                    <ValidationMessage For="@(() => excursion.Price)" />
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <InputDate @bind-Value="excursion.StartsOnDate" class="form-control" />
+                    <ValidationMessage For="@(() => excursion.StartsOnDate)" />
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <InputDate @bind-Value="excursion.EndsOnDate" class="form-control" />
+                    <ValidationMessage For="@(() => excursion.EndsOnDate)" />
+                </div>
+                <button class="btn btn-primary">
+                    @if (loading) {
+                        <span class="spinner-border spinner-border-sm mr-1"></span>
+                    }
+                    Create
+                </button>
+            @if (!string.IsNullOrEmpty(error))
+            {
+                <div class="alert alert-danger mt-3 mb-0">@error</div>
+            }
+            </EditForm>
+        </div>
+    </div>
+
+@code {
+    private ExcursionModel excursion = new ExcursionModel();
+    private HttpResponseMessage response = new HttpResponseMessage();
+    private bool loading;
+    private string error;
+    private async void HandleValidSubmit()
+    {
+        loading = true;
+        try
+        {
+            excursion.Destinations = new List<DestinationModel>();
+            string s =await localStorage.GetItemAsync<string>("token");
+            excursion.UserRole = jwt.GetRole(s);
+            response = await Http.PostAsJsonAsync<ExcursionModel>("https://localhost:7269/Excursion/Create", excursion);
+            navManager.NavigateTo("");
+
+        }
+        catch (Exception ex)
+        {
+            error = ex.Message;
+            loading = false;
+            StateHasChanged();
+        }
+    }
+}

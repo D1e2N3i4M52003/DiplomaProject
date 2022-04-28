@@ -1,0 +1,107 @@
+﻿@page "/administration"
+@inject HttpClient Http
+@inject IJWTService jwtService
+@inject IAuthenticationService authService
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+
+        <div class="container-fluid">
+        <h1 style="text-align: center;">Системни настройки</h1>
+        <div class="row" style="margin-top: 20px;">
+            <div class="col-md">
+                <h3>Services for <bold>Destinations</bold></h3>
+                 <ul style="list-style-type: none;">
+                <li class="nav-item">
+                    <NavLink class="nav-link" href="destcreate">
+                        <span class="oi oi-envelope-open" aria-hidden="true"></span> Create
+                    </NavLink>
+                </li>
+                <li class="nav-item">
+                    <NavLink class="nav-link" href="destedit">
+                        <span class="oi oi-magnifying-glass" aria-hidden="true"></span> Edit
+                                    </NavLink>
+                                </li>
+                                <li class="nav-item">
+                                    <NavLink class="nav-link" href="destination/delete">
+                                        <span class="oi oi-delete aria-hidden="true"></span>Delete
+                                    </NavLink>
+                                </li>
+                                </ul>
+                            </div>
+            <div class="col-md">
+                <h3>Services for <bold>Excursions</bold></h3>
+                             <ul style="list-style-type: none;">
+                                <li class="nav-item">
+                                    <NavLink class="nav-link" href="excursioncreate">
+                                        <span class="oi oi-envelope-open" aria-hidden="true"></span>Create
+                                    </NavLink>
+                                </li>
+                                 <li class="nav-item">
+                                    <NavLink class="nav-link" href="excedit">
+                                        <span class="oi oi-magnifying-glass" aria-hidden="true"></span>Edit
+                                    </NavLink>
+                                </li> 
+                                <li class="nav-item">
+                                    <NavLink class="nav-link" href="excursion/delete">
+                                        <span class="oi oi-delete aria-hidden="true"></span>Delete
+                                    </NavLink>
+                                </li>
+                                <li class="nav-item">
+                                    <NavLink class="nav-link" href="adddest">
+                                        <span class="oi oi-folder" aria-hidden="true"></span>Add destination
+                                    </NavLink>
+                                </li>
+                                </ul>
+                                </div>
+                        </div>
+                        </div>
+                    <div class="container-fluid">
+                        <div class="row">
+                        <div class="col-md">
+                            <h3>Services for <bold>Post</bold></h3>
+                            <ul style="list-style-type: none;">
+                                <li class="nav-item">
+                                    <NavLink class="nav-link" href="post/create">
+                                        <span class="oi oi-envelope-open" aria-hidden="true"></span>Create
+                                    </NavLink>
+                                </li>
+                                 <li class="nav-item">
+                                    <NavLink class="nav-link" href="post/edit">
+                                        <span class="oi oi-magnifying-glass" aria-hidden="true"></span>Edit
+                                    </NavLink>
+                                </li> 
+                                <li class="nav-item">
+                                    <NavLink class="nav-link" href="post/delete">
+                                        <span class="oi oi-delete aria-hidden="true"></span>Delete
+                                    </NavLink>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="col-md">
+                            <h3>Services for <bold>User</bold></h3>
+                             <ul style="list-style-type: none;">
+                                <li class="nav-item">
+                                    <NavLink class="nav-link" href="user/edit">
+                                        <span class="oi oi-envelope-open" aria-hidden="true"></span>Edit
+                                    </NavLink>
+                                </li>
+                                </ul>
+                </div>
+            </div>
+            </div>
+            
+@code {
+    private List<DestinationModel> destinations = new List<DestinationModel>();
+    private DestinationModel destinationModel =new DestinationModel();
+    string Name;
+    private string SuppliedName { get; set; }
+    protected override async Task OnInitializedAsync()
+    {
+        destinations = await Http.GetFromJsonAsync<List<DestinationModel>>("Destination");
+        
+        string s = await localStorage.GetItemAsync<string>("token");
+        if(s!=null){
+        if (jwtService.GetExpiryTimestamp(s) <= DateTime.Now)
+        { await authService.Logout(); }}
+    }
+
+}

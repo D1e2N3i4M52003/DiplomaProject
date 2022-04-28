@@ -1,0 +1,67 @@
+﻿@page "/destcreate"
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor context;
+@inject HttpClient Http
+@inject IJWTService jwt
+@inject NavigationManager navManager
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+
+<PageTitle>Create</PageTitle>
+
+
+    <div class="card">
+        <h4 class="card-header">Създаване</h4>
+        <div class="card-body">
+            <EditForm Model="@dest" OnValidSubmit="HandleValidSubmit">
+                <DataAnnotationsValidator />
+                <div class="form-group">
+                    <label>Име</label>
+                    <InputText @bind-Value="dest.Name" class="form-control" />
+                    <ValidationMessage For="@(() => dest.Name)" />
+                </div>
+                <div class="form-group">
+                    <label>Град</label>
+                    <InputText @bind-Value="dest.City" class="form-control" />
+                    <ValidationMessage For="@(() => dest.City)" />
+                </div>
+                <div class="form-group">
+                    <label>Описание</label>
+                    <InputTextArea @bind-Value="dest.Description" class="form-control" />
+                    <ValidationMessage For="@(() => dest.Description)" />
+                </div>
+                <button class="btn btn-primary">
+                    @if (loading) {
+                        <span class="spinner-border spinner-border-sm mr-1"></span>
+                    }
+                    Създай
+                </button>
+                @if (!string.IsNullOrEmpty(error)) {
+                    <div class="alert alert-danger mt-3 mb-0">@error</div>
+                }
+            </EditForm>
+        </div>
+    </div>
+
+@code {
+    private DestinationModel dest = new DestinationModel();
+    private HttpResponseMessage response = new HttpResponseMessage();
+    private bool loading;
+    private string error;
+    private async void HandleValidSubmit()
+    {
+        loading = true;
+        try
+        {
+            string s =await localStorage.GetItemAsync<string>("token");
+            dest.UserRole = jwt.GetRole(s);
+            response = await Http.PostAsJsonAsync<DestinationModel>("https://localhost:7269/Destination/Create", dest);
+            navManager.NavigateTo("");
+
+        }
+        catch (Exception ex)
+        {
+            error = ex.Message;
+            loading = false;
+            StateHasChanged();
+        }
+    }
+}

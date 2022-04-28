@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace Business.JSONModels
 {
-    public class ChangePasswordRequest
+    public class ChangePasswordRequest : BaseModel
     {
-        [Required]
         public string OldPassword { get; set; }
-
-        [Required]
         public string NewPassword { get; set; }
+
+        public string UserRole { get; set; }
+        public Guid UserId { get; set; }
     }
 }

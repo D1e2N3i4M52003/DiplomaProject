@@ -1,0 +1,51 @@
+﻿@page "/excursions"
+@using System.ComponentModel.DataAnnotations
+@using Business.JSONModels
+@using Newtonsoft.Json;
+@using PresentationLayer.Services;
+@inject HttpClient Http
+@inject IJWTService jwtService
+@inject IAuthenticationService authService
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+
+<PageTitle>Услуги</PageTitle>
+
+<h1>Услуги</h1>
+
+           @foreach (var excursion in excursions)
+            {
+                <div class="card my-4">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            @excursion.Name - 
+                        <small class="card-subtitle">@excursion.Price</small>
+                        </h5>
+                        @foreach(var dest in excursion.Destinations)
+                        {
+                            <p class="card-text">
+                                @dest.Name
+                            </p>
+                        }
+                        <p>@excursion.StartsOnDate - @excursion.EndsOnDate</p>
+                        <a href="/excursion/@excursion.Id" class="btn btn-primary">Read more...</a>
+                    </div>
+                </div>
+            }
+
+
+@code {
+    string s;
+    private List<ExcursionModel> excursions = new List<ExcursionModel>();
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        s = await localStorage.GetItemAsync<string>("token");
+        if (s != null)
+        {
+            if (jwtService.GetExpiryTimestamp(s) <= DateTime.Now)
+            { await authService.Logout(); }
+        }
+        excursions = await Http.GetFromJsonAsync<List<ExcursionModel>>("Excursion");
+    } 
+}

@@ -19,20 +19,20 @@ namespace DataLayer.Repositories
             _context = context;
         }
 
-        public virtual IQueryable<T> GetAll()
+        public virtual async Task<ICollection<T>> GetAll()
         {
-            return _context.Set<T>().AsQueryable();
+            return await _context.Set<T>().ToListAsync();
         }
 
-        public virtual IQueryable<T> GetAll(Expression<Func<T, bool>> filter)
+        public virtual async Task<ICollection<T>> GetAll(Expression<Func<T, bool>> filter)
         {
-            return _context.Set<T>().Where(filter);
+            return await _context.Set<T>().Where(filter).ToListAsync();
         }
-        public virtual ValueTask<T?> GetByAsync(Expression<Func<T, bool>> filter)
+        public virtual async ValueTask<ICollection<T>> GetByAsync(Expression<Func<T, bool>> filter)
         {
-            return _context.Set<T>().FindAsync(filter);
+            return await _context.Set<T>().Where(filter).ToListAsync();
         }
-        public virtual async ValueTask<T?> GetByIdAsync(Guid id)
+        public virtual async Task<T> GetByIdAsync(Guid id)
         {
             return await _context.Set<T>().FindAsync(id);
         }

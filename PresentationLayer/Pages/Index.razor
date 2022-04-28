@@ -1,0 +1,89 @@
+﻿@page "/"
+@using System.ComponentModel.DataAnnotations
+@using Business.JSONModels
+@using Newtonsoft.Json;
+@using PresentationLayer.Services;
+@inject HttpClient Http
+@inject IJWTService jwtService
+@inject IAuthenticationService authService
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+
+<PageTitle>ПловдивТур</PageTitle>
+
+<h1>Добре дошли при нас в ПловдивТур</h1>
+<p>
+Ние сме нова туристическа агенция и с удоволствие ви представяме първата версия на нашият сайт.
+</p>
+
+
+<h1>Екскурзии</h1>
+
+           @foreach (var excursion in excursions)
+            {
+                <div class="card my-4">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            @excursion.Name - 
+                        <small class="card-subtitle">@excursion.Price</small>
+                        </h5>
+                        @foreach(var dest in excursion.Destinations)
+                        {
+                            <p class="card-text">
+                                @dest.Name
+                            </p>
+                        }
+                        <p>@excursion.StartsOnDate - @excursion.EndsOnDate</p>
+                        <a href="/excursion/@excursion.Id" class="btn btn-primary">Read more...</a>
+                    </div>
+                </div>
+            }
+
+            <h1>Дестинации</h1>
+
+
+
+
+           @foreach (var destination in destinations)
+            {
+                <div class="card my-4">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            @destination.Name
+                        </h5>
+                        
+                        <p class="card-text">@destination.Description</p>
+                        <p class="card-text">@destination.City</p>
+                    </div>
+                </div>
+            }
+
+
+@code {
+    string s;
+    private List<ExcursionModel> excursions = new List<ExcursionModel>();
+    private List<DestinationModel> destinations = new List<DestinationModel>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        s = await localStorage.GetItemAsync<string>("token");
+        if (s != null)
+        {
+            if (jwtService.GetExpiryTimestamp(s) <= DateTime.Now)
+            { await authService.Logout(); }
+        }
+        excursions = await Http.GetFromJsonAsync<List<ExcursionModel>>("Excursion");
+        if(excursions.Count>2)
+        {
+            excursions.RemoveRange(2, excursions.Count - 2);
+
+        }
+        
+        destinations = await Http.GetFromJsonAsync<List<DestinationModel>>("Destination");
+
+        if(destinations.Count>2)
+        {
+            destinations.RemoveRange(2, destinations.Count - 2);
+
+        }
+    } 
+    }
